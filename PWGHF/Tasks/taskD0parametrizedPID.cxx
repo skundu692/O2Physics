@@ -53,11 +53,11 @@ struct TaskD0parametrizedPIDMC {
      {"hMassSigD0PerfectPID", "2-prong candidates (matched);#it{m}_{inv} (GeV/#it{c}^{2}); #it{p}_{T}; #it{y}", {HistType::kTH3F, {{120, 1.5848, 2.1848}, {150, 0., 30.}, {8, 0., 4.}}}},
      {"hMassBkgD0PerfectPID", "2-prong candidates (checked);#it{m}_{inv} (GeV/#it{c}^{2}); #it{p}_{T}; #it{y}", {HistType::kTH3F, {{120, 1.5848, 2.1848}, {150, 0., 30.}, {8, 0., 4.}}}}}};
 
-  //Configurable<double> centralitySelectionMin{"centralitySelectionMin", 0.0, "Lower boundary of centrality selection"};                                                                                  
+  //Configurable<double> centralitySelectionMin{"centralitySelectionMin", 0.0, "Lower boundary of centrality selection"};
   //Configurable<double> centralitySelectionMax{"centralitySelectionMax", 30000.0, "Higher boundary of centrality selection"};
-  
+
   Filter filterSelectCandidates = (aod::hf_selcandidate_d0_parametrizedPID::isSelD0NoPID >= 1 || aod::hf_selcandidate_d0_parametrizedPID::isSelD0barNoPID >= 1);
-  
+
   void process(soa::Filtered<soa::Join<aod::HfCandProng2, aod::HFSelD0CandidateparametrizedPID, aod::HfCandProng2MCRec>> const& candidates, soa::Join<aod::McParticles, aod::HfCandProng2MCGen> const& particlesMC, aod::BigTracksMC const& tracks)
   // void process(const o2::aod::Collision& collision, soa::Filtered<soa::Join<aod::HfCandProng2, aod::HFSelD0CandidateparametrizedPID, aod::HfCandProng2MCRec>> const& candidates, soa::Join<aod::McParticles, aod::HfCandProng2MCGen> const& particlesMC, aod::BigTracksMC const& tracks)
   {
@@ -72,7 +72,7 @@ struct TaskD0parametrizedPIDMC {
       if (std::abs(YD0(candidate)) > 4.0) {
         continue;
       }
-      
+
       auto massD0 = InvMassD0(candidate);
       auto massD0bar = InvMassD0bar(candidate);
       auto ptCandidate = candidate.pt();

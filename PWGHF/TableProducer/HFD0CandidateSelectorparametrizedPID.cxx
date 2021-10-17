@@ -204,19 +204,19 @@ struct HFD0CandidateSelectorparametrizedPID {
       int statusD0bar = 0;
 
       if (!(candidate.hfflag() & 1 << DecayType::D0ToPiK)) {
-	hfSelD0CandidateparametrizedPID(statusD0NoPID, statusD0PerfectPID, statusD0, statusD0barNoPID, statusD0barPerfectPID, statusD0bar);
+        hfSelD0CandidateparametrizedPID(statusD0NoPID, statusD0PerfectPID, statusD0, statusD0barNoPID, statusD0barPerfectPID, statusD0bar);
         continue;
       }
-      
+
       // conjugate-independent topological selection
       if (!selectionTopol(candidate)) {
-	hfSelD0CandidateparametrizedPID(statusD0NoPID, statusD0PerfectPID, statusD0, statusD0barNoPID, statusD0barPerfectPID, statusD0bar);
+        hfSelD0CandidateparametrizedPID(statusD0NoPID, statusD0PerfectPID, statusD0, statusD0barNoPID, statusD0barPerfectPID, statusD0bar);
         continue;
       }
-      
+
       auto trackPos = candidate.index0_as<Trks>();
       auto trackNeg = candidate.index1_as<Trks>();
-      
+
       auto momentumPosTrack = trackPos.p();
       auto momentumNegTrack = trackNeg.p();
       auto ptPosTrack = trackPos.pt();
@@ -226,9 +226,9 @@ struct HFD0CandidateSelectorparametrizedPID {
 
       bool topolD0 = selectionTopolConjugate(candidate, trackPos, trackNeg);
       bool topolD0bar = selectionTopolConjugate(candidate, trackNeg, trackPos);
-      
+
       if (!topolD0 && !topolD0bar) {
-	hfSelD0CandidateparametrizedPID(statusD0NoPID, statusD0PerfectPID, statusD0, statusD0barNoPID, statusD0barPerfectPID, statusD0bar);
+        hfSelD0CandidateparametrizedPID(statusD0NoPID, statusD0PerfectPID, statusD0, statusD0barNoPID, statusD0barPerfectPID, statusD0bar);
         continue;
       }
 
@@ -236,120 +236,100 @@ struct HFD0CandidateSelectorparametrizedPID {
       const auto mcParticleNegative = trackNeg.mcParticle();
       int pdgPositive = mcParticlePositive.pdgCode();
       int pdgNegative = mcParticleNegative.pdgCode();
-      
+
       bool selectPosPion = false;
       bool selectNegKaon = false;
       bool selectNegPion = false;
       bool selectPosKaon = false;
 
-      if (etaPosTrack>=d_etaperfectPID)
-	{
-	  if(ptPosTrack<(19.58/std::cosh(etaPosTrack)))
-	    {
-	      if(pdgPositive==321)selectPosKaon=true;
-	      if(ptPosTrack<(11.65/std::cosh(etaPosTrack)) && pdgPositive==211)selectPosPion=true;
-	    }
-	  else
-	    {
-	      selectPosPion = true;
-	      selectPosKaon = true;
-	    }	  
-	}
-      else
-	{
-	  if (trackPos.hasTOF()){
-	    if (std::abs(trackPos.tofNSigmaPi())<3.0){
-	      selectPosPion = true;
-	    }
-	    else if (std::abs(trackPos.tofNSigmaKa())<3.0){
-	      selectPosKaon = true;
-	    }
-	  }
+      if (etaPosTrack >= d_etaperfectPID) {
+        if (ptPosTrack < (19.58 / std::cosh(etaPosTrack))) {
+          if (pdgPositive == 321)
+            selectPosKaon = true;
+          if (ptPosTrack < (11.65 / std::cosh(etaPosTrack)) && pdgPositive == 211)
+            selectPosPion = true;
+        } else {
+          selectPosPion = true;
+          selectPosKaon = true;
+        }
+      } else {
+        if (trackPos.hasTOF()) {
+          if (std::abs(trackPos.tofNSigmaPi()) < 3.0) {
+            selectPosPion = true;
+          } else if (std::abs(trackPos.tofNSigmaKa()) < 3.0) {
+            selectPosKaon = true;
+          }
+        }
 
-	  if (trackPos.has_rich() && !trackPos.hasTOF()){
-	    if (std::abs(trackPos.rich().richNsigmaPi())<3.0){
-	      selectPosPion = true;
-	    }
-	    else if (std::abs(trackPos.rich().richNsigmaKa())<3.0){
-	      selectPosKaon = true;
-	    }
-	  }
+        if (trackPos.has_rich() && !trackPos.hasTOF()) {
+          if (std::abs(trackPos.rich().richNsigmaPi()) < 3.0) {
+            selectPosPion = true;
+          } else if (std::abs(trackPos.rich().richNsigmaKa()) < 3.0) {
+            selectPosKaon = true;
+          }
+        }
 
-	  if (trackPos.has_rich() && trackPos.hasTOF()){
-	    if ((trackPos.rich().richNsigmaPi()*trackPos.rich().richNsigmaPi()+trackPos.tofNSigmaPi()*trackPos.tofNSigmaPi())<9.0){
-	      selectPosPion = true;
-	    }
-	    else if ((trackPos.rich().richNsigmaKa()*trackPos.rich().richNsigmaKa()+trackPos.tofNSigmaKa()*trackPos.tofNSigmaKa())<9.0){
-	      selectPosKaon = true;
-	    }
-	  }
-	}
+        if (trackPos.has_rich() && trackPos.hasTOF()) {
+          if ((trackPos.rich().richNsigmaPi() * trackPos.rich().richNsigmaPi() + trackPos.tofNSigmaPi() * trackPos.tofNSigmaPi()) < 9.0) {
+            selectPosPion = true;
+          } else if ((trackPos.rich().richNsigmaKa() * trackPos.rich().richNsigmaKa() + trackPos.tofNSigmaKa() * trackPos.tofNSigmaKa()) < 9.0) {
+            selectPosKaon = true;
+          }
+        }
+      }
 
-      if (etaNegTrack>=d_etaperfectPID)
-	{
-	  if(ptNegTrack<(19.58/std::cosh(etaNegTrack)))
-	    {
-	      if(pdgNegative==-321)selectNegKaon=true;
-	      if(ptNegTrack<(11.65/std::cosh(etaNegTrack)) && pdgNegative==-211)selectNegPion=true;
-	    }
-	  else
-	    {
-	      selectNegPion = true;
-	      selectNegKaon = true;
-	    }	  
-	}
-      else
-	{
-	  if (trackNeg.hasTOF()){
-	    if (std::abs(trackNeg.tofNSigmaPi())<3.0){
-	      selectNegPion = true;
-	    }
-	    else if (std::abs(trackNeg.tofNSigmaKa())<3.0){
-	      selectNegKaon = true;
-	    }
-	  }
+      if (etaNegTrack >= d_etaperfectPID) {
+        if (ptNegTrack < (19.58 / std::cosh(etaNegTrack))) {
+          if (pdgNegative == -321)
+            selectNegKaon = true;
+          if (ptNegTrack < (11.65 / std::cosh(etaNegTrack)) && pdgNegative == -211)
+            selectNegPion = true;
+        } else {
+          selectNegPion = true;
+          selectNegKaon = true;
+        }
+      } else {
+        if (trackNeg.hasTOF()) {
+          if (std::abs(trackNeg.tofNSigmaPi()) < 3.0) {
+            selectNegPion = true;
+          } else if (std::abs(trackNeg.tofNSigmaKa()) < 3.0) {
+            selectNegKaon = true;
+          }
+        }
 
-	  if (trackNeg.has_rich() && !trackNeg.hasTOF()){
-	    if (std::abs(trackNeg.rich().richNsigmaPi())<3.0){
-	      selectNegPion = true;
-	    }
-	    else if (std::abs(trackNeg.rich().richNsigmaKa())<3.0){
-	      selectNegKaon = true;
-	    }
-	  }
+        if (trackNeg.has_rich() && !trackNeg.hasTOF()) {
+          if (std::abs(trackNeg.rich().richNsigmaPi()) < 3.0) {
+            selectNegPion = true;
+          } else if (std::abs(trackNeg.rich().richNsigmaKa()) < 3.0) {
+            selectNegKaon = true;
+          }
+        }
 
-	  if (trackNeg.has_rich() && trackNeg.hasTOF()){
-	    if ((trackNeg.rich().richNsigmaPi()*trackNeg.rich().richNsigmaPi()+trackNeg.tofNSigmaPi()*trackNeg.tofNSigmaPi())<9.0){
-	      selectNegPion = true;
-	    }
-	    else if ((trackNeg.rich().richNsigmaKa()*trackNeg.rich().richNsigmaKa()+trackNeg.tofNSigmaKa()*trackNeg.tofNSigmaKa())<9.0){
-	      selectNegKaon = true;
-	    }
-	  }
-	}
-
+        if (trackNeg.has_rich() && trackNeg.hasTOF()) {
+          if ((trackNeg.rich().richNsigmaPi() * trackNeg.rich().richNsigmaPi() + trackNeg.tofNSigmaPi() * trackNeg.tofNSigmaPi()) < 9.0) {
+            selectNegPion = true;
+          } else if ((trackNeg.rich().richNsigmaKa() * trackNeg.rich().richNsigmaKa() + trackNeg.tofNSigmaKa() * trackNeg.tofNSigmaKa()) < 9.0) {
+            selectNegKaon = true;
+          }
+        }
+      }
 
       if (topolD0) {
         statusD0NoPID = 1;
-        if (pdgPositive == 211 && pdgNegative == -321)
-	  {
-	    statusD0PerfectPID = 1;
-	  }
-        if (selectPosPion && selectNegKaon)
-	  {
-	    statusD0 = 1;
-	  }
-      }
-      else if (topolD0bar) {
-	statusD0barNoPID = 1;
-        if (pdgPositive == 321 && pdgNegative == -211)
-	  {
-	    statusD0barPerfectPID = 1;
-	  }
-        if (selectNegPion && selectPosKaon)
-	  {
-	    statusD0bar = 1;
-	  }
+        if (pdgPositive == 211 && pdgNegative == -321) {
+          statusD0PerfectPID = 1;
+        }
+        if (selectPosPion && selectNegKaon) {
+          statusD0 = 1;
+        }
+      } else if (topolD0bar) {
+        statusD0barNoPID = 1;
+        if (pdgPositive == 321 && pdgNegative == -211) {
+          statusD0barPerfectPID = 1;
+        }
+        if (selectNegPion && selectPosKaon) {
+          statusD0bar = 1;
+        }
       }
       hfSelD0CandidateparametrizedPID(statusD0NoPID, statusD0PerfectPID, statusD0, statusD0barNoPID, statusD0barPerfectPID, statusD0bar);
     }
